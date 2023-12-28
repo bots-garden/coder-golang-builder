@@ -33,4 +33,4 @@ services:
         target: /var/run/docker.sock
     ports:
       - ${CODER_HTTP_PORT}:${CODER_HTTP_PORT}
-      - 8080:8080
+      #- 8080:8080
