@@ -1,0 +1,36 @@
+# docker compose build
+# docker compose up -d
+
+services:
+  app:
+    container_name: ${CONTAINER_NAME}-compose
+    # open http://0.0.0.0:5000
+    entrypoint: ["code-server", "--auth", "none", "--host", "0.0.0.0", "--port", "${CODER_HTTP_PORT}", "/${WORKDIR}"]
+    environment:
+      - XDG_DATA_HOME=/${WORKDIR}/.config
+    build:         
+      args:
+        - GO_ARCH=${GO_ARCH}
+        - GO_VERSION=${GO_VERSION}
+        - NODE_DISTRO=${NODE_DISTRO}
+        - NODE_VERSION=${NODE_VERSION}
+        - ZELLIJ_VERSION=${ZELLIJ_VERSION}
+        - ZELLIJ_ARCH=${ZELLIJ_ARCH}
+        - HELM_VERSION=${HELM_VERSION}
+        - HELM_ARCH=${HELM_ARCH}
+        - CODER_VERSION=${CODER_VERSION}
+        - CODER_ARCH=${CODER_ARCH}
+        - USER_NAME=${USER_NAME}
+      context: ./.docker
+      dockerfile: Dockerfile
+    init: true
+    volumes:
+      - ~/.ssh:/root/.ssh
+      - ~/.kube:/home/${USER_NAME}/.kube
+      - .:/${WORKDIR}
+      - type: bind
+        source: /var/run/docker.sock
+        target: /var/run/docker.sock
+    ports:
+      - ${CODER_HTTP_PORT}:${CODER_HTTP_PORT}
+      - 8080:8080
